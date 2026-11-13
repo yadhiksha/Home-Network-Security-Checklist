@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Home Network Security Audit Report - InternCircle Project 04</title>
+<style>
+  :root {
+    --bg-primary: #0a0f1d;
+    --bg-card: #111a2e;
+    --bg-card-alt: #16223b;
+    --border-color: #233554;
+    --accent-blue: #38bdf8;
+    --accent-cyan: #00f2fe;
+    --accent-navy: #1e3a8a;
+    --accent-indigo: #6366f1;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --badge-critical: #ef4444;
+    --badge-high: #f97316;
+    --badge-med: #eab308;
+    --badge-low: #10b981;
+    --badge-verified: #06b6d4;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.65;
+    padding: 0;
+    margin: 0;
+  }
+
+  .report-container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 40px 30px;
+  }
+
+  /* Cover Page */
+  .cover-page {
+    min-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 60px 40px;
+    background: linear-gradient(145deg, #0f172a 0%, #1e1b4b 50%, #0a0f1d 100%);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    margin-bottom: 50px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    page-break-after: always;
+  }
+
+  .cover-header {
+    border-bottom: 2px solid var(--accent-blue);
+    padding-bottom: 20px;
+  }
+
+  .cover-badge {
+    display: inline-block;
+    background: rgba(56, 189, 248, 0.15);
+    color: var(--accent-blue);
+    border: 1px solid var(--accent-blue);
+    padding: 4px 14px;
+    border-radius: 9999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 15px;
+  }
+
+  .cover-title {
+    font-size: 2.75rem;
+    font-weight: 800;
+    line-height: 1.2;
+    background: linear-gradient(90deg, #ffffff, #38bdf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 12px;
+  }
+
+  .cover-subtitle {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    font-weight: 400;
+  }
+
+  .cover-metadata-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    background: rgba(17, 26, 46, 0.7);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 25px;
+    margin: 40px 0;
+  }
+
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .meta-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .meta-value {
+    font-size: 1rem;
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+
+  .cover-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border-color);
+    padding-top: 20px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  /* Typography & Structure */
+  h1, h2, h3, h4 {
+    color: #ffffff;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+
+  h2 {
+    font-size: 1.65rem;
+    margin-top: 45px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  h2::before {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 24px;
+    background: linear-gradient(180deg, var(--accent-cyan), var(--accent-blue));
+    border-radius: 3px;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+    margin-top: 25px;
+    margin-bottom: 12px;
+    color: #e2e8f0;
+  }
+
+  p {
+    margin-bottom: 16px;
+    color: var(--text-secondary);
+    font-size: 0.98rem;
+  }
+
+  ul, ol {
+    margin-bottom: 20px;
+    padding-left: 24px;
+    color: var(--text-secondary);
+  }
+
+  li {
+    margin-bottom: 8px;
+  }
+
+  strong {
+    color: #ffffff;
+  }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 25px 0 35px 0;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    font-size: 0.88rem;
+  }
+
+  th {
+    background: var(--bg-card-alt);
+    color: #ffffff;
+    text-align: left;
+    padding: 12px 14px;
+    font-weight: 600;
+    border-bottom: 1px solid var(--border-color);
+    letter-spacing: 0.5px;
+  }
+
+  td {
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(35, 53, 84, 0.5);
+    color: var(--text-secondary);
+    vertical-align: top;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  tr:hover td {
+    background: rgba(56, 189, 248, 0.03);
+  }
+
+  /* Badges */
+  .badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .badge-crit { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+  .badge-high { background: rgba(249, 115, 22, 0.2); color: #fb923c; border: 1px solid rgba(249, 115, 22, 0.4); }
+  .badge-med { background: rgba(234, 179, 8, 0.2); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.4); }
+  .badge-low { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+  .badge-ver { background: rgba(6, 182, 212, 0.2); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.4); }
+
+  /* Callout Boxes */
+  .callout {
+    background: rgba(17, 26, 46, 0.9);
+    border-left: 4px solid var(--accent-blue);
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin: 20px 0;
+    border-top: 1px solid rgba(35, 53, 84, 0.4);
+    border-right: 1px solid rgba(35, 53, 84, 0.4);
+    border-bottom: 1px solid rgba(35, 53, 84, 0.4);
+  }
+
+  .callout-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--accent-blue);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 6px;
+  }
+
+  .callout-body {
+    font-size: 0.92rem;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  .callout-warn { border-left-color: #f59e0b; }
+  .callout-warn .callout-title { color: #f59e0b; }
+
+  .callout-crit { border-left-color: #ef4444; }
+  .callout-crit .callout-title { color: #ef4444; }
+
+  /* Code / Pre / Mockups */
+  pre {
+    background: #060913;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 16px;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+    font-size: 0.84rem;
+    color: #38bdf8;
+    overflow-x: auto;
+    margin: 18px 0;
+    line-height: 1.45;
+  }
+
+  code {
+    background: rgba(56, 189, 248, 0.1);
+    color: #38bdf8;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.88em;
+    font-family: Consolas, monospace;
+  }
+
+  /* Evidence Mockup Card */
+  .evidence-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 25px 0;
+  }
+
+  .evidence-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+  }
+
+  .evidence-title {
+    font-weight: 700;
+    color: #ffffff;
+    font-size: 0.95rem;
+  }
+
+  .evidence-file {
+    font-size: 0.8rem;
+    color: var(--accent-blue);
+    font-family: monospace;
+  }
+
+  /* Print Styles for Perfect PDF Export */
+  @media print {
+    body {
+      background-color: #ffffff !important;
+      color: #0f172a !important;
+      font-size: 11pt;
+    }
+
+    .report-container {
+      max-width: 100% !important;
+      padding: 0 !important;
+    }
+
+    .cover-page {
+      background: #0f172a !important;
+      color: #ffffff !important;
+      box-shadow: none !important;
+      border: none !important;
+      min-height: 100vh;
+      page-break-after: always;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    h1, h2, h3 {
+      color: #0f172a !important;
+      page-break-after: avoid;
+    }
+
+    h2::before {
+      background: #0284c7 !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    p, li, td {
+      color: #334155 !important;
+    }
+
+    table {
+      background: #ffffff !important;
+      border: 1px solid #cbd5e1 !important;
+      page-break-inside: avoid;
+    }
+
+    th {
+      background: #f1f5f9 !important;
+      color: #0f172a !important;
+      border-bottom: 2px solid #cbd5e1 !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    td {
+      border-bottom: 1px solid #e2e8f0 !important;
+    }
+
+    pre {
+      background: #f8fafc !important;
+      color: #0369a1 !important;
+      border: 1px solid #cbd5e1 !important;
+      page-break-inside: avoid;
+    }
+
+    .callout {
+      background: #f8fafc !important;
+      border: 1px solid #cbd5e1 !important;
+      border-left: 4px solid #0284c7 !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .callout-title {
+      color: #0284c7 !important;
+    }
+
+    .callout-body {
+      color: #334155 !important;
+    }
+
+    .evidence-card {
+      background: #f8fafc !important;
+      border: 1px solid #cbd5e1 !important;
+      page-break-inside: avoid;
+    }
+
+    .page-break {
+      page-break-after: always;
+    }
+
+    @page {
+      margin: 15mm 20mm;
+      @bottom-right {
+        content: "Page " counter(page);
+        font-size: 9pt;
+        color: #64748b;
+      }
+      @bottom-left {
+        content: "InternCircle Cybersecurity Audit - SEC-AUD-2026-P04";
+        font-size: 8pt;
+        color: #94a3b8;
+      }
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="report-container">
+
+  <!-- COVER PAGE -->
+  <div class="cover-page">
+    <div class="cover-header">
+      <span class="cover-badge">Cybersecurity Internship Project 04</span>
+      <h1 class="cover-title">Home Network Security<br>Audit Report</h1>
+      <p class="cover-subtitle">Comprehensive Edge Gateway, Wireless Encryption &amp; Asset Hygiene Assessment</p>
+    </div>
+
+    <div class="cover-metadata-grid">
+      <div class="meta-item">
+        <span class="meta-label">Document Reference</span>
+        <span class="meta-value">SEC-AUD-2026-P04</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Assessment Date</span>
+        <span class="meta-value">November 2026</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Lead Assessor</span>
+        <span class="meta-value">[Candidate / Intern Name]</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Supervising Body</span>
+        <span class="meta-value">InternCircle Internship Program</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Target Environment</span>
+        <span class="meta-value">Residential WLAN &amp; LAN Subnet (192.168.1.0/24)</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Audit Status</span>
+        <span class="meta-value">Draft Baseline &amp; Verification Workpaper</span>
+      </div>
+    </div>
+
+    <div class="cover-footer">
+      <span>Framework: CISA SOHO Security &amp; NIST CSF v2.0</span>
+      <span>Classification: CONFIDENTIAL / INTERNAL AUDIT</span>
+    </div>
+  </div>
+
+  <!-- SECTION 1: EXECUTIVE SUMMARY -->
+  <h2>1. Executive Summary</h2>
+  <p>A rigorous cybersecurity assessment was executed across a residential local area network (LAN) and wireless local area network (WLAN) infrastructure. The primary goal was to evaluate gateway edge security, wireless encryption ciphers, administrative credentials, network segmentation, and host endpoint hygiene against authoritative standards published by the <strong>Cybersecurity and Infrastructure Security Agency (CISA)</strong>.</p>
+  <p>Residential networks now function as enterprise edge extensions due to pervasive telework. The proliferation of low-cost, unmanaged Internet of Things (IoT) peripherals combined with unhardened gateway routers presents an expanded attack surface for cyber adversaries seeking initial footholds.</p>
+
+  <div class="callout">
+    <div class="callout-title">Audit Integrity &amp; Safe Methodology Notice</div>
+    <div class="callout-body">This report contains baseline technical observations and clearly marked sample placeholders (<code>[SAMPLE DATA]</code>). All data entries reflect real-world hardening baselines. The assessor must replace sample placeholders with physically verified settings prior to final submission. In strict adherence to ethical standards, all public WAN IPs, passphrases, and hardware MAC address octets are redacted.</div>
+  </div>
+
+  <!-- SECTION 2: OBJECTIVES & SCOPE -->
+  <h2>2. Objectives, Scope &amp; Rules of Engagement</h2>
+  <p>This engagement was conducted under authorized ethical testing guidelines, targeting exclusively privately owned equipment.</p>
+  <ul>
+    <li><strong>Asset Visibility:</strong> Complete enumeration of all connected wired and wireless devices on subnet <code>192.168.1.0/24</code>.</li>
+    <li><strong>Perimeter Defense:</strong> Elimination of default credentials, deactivation of Universal Plug and Play (UPnP), and disabling remote WAN administration.</li>
+    <li><strong>Wireless Hardening:</strong> Migration toward WPA3-Personal (SAE) with Protected Management Frames (PMF) and elimination of Wi-Fi Protected Setup (WPS).</li>
+    <li><strong>Architectural Segmentation:</strong> Deployment of a segregated Guest Network for IoT peripherals with Client Isolation enforced.</li>
+  </ul>
+
+  <!-- SECTION 3: DEVICE INVENTORY -->
+  <h2>3. Connected Device Inventory &amp; Asset Discovery</h2>
+  <p>Asset enumeration was performed using passive router DHCP table correlation and local ARP cache analysis (<code>Get-NetNeighbor</code>). 10 connected assets were discovered and cataloged below:</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Asset ID</th>
+        <th>Device Hostname</th>
+        <th>Category</th>
+        <th>Operating System</th>
+        <th>Assigned IP</th>
+        <th>MAC (Masked)</th>
+        <th>Patch Status</th>
+        <th>Risk Tier</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>DEV-01</strong></td>
+        <td><code>GW-ROUTER-01</code></td>
+        <td>Gateway / AP</td>
+        <td>Embedded Linux v1.0.4</td>
+        <td>192.168.1.1</td>
+        <td><code>50:C7:BF:XX:XX:XX</code></td>
+        <td>Firmware check required</td>
+        <td><span class="badge badge-high">HIGH</span></td>
+      </tr>
+      <tr>
+        <td><strong>DEV-02</strong></td>
+        <td><code>WS-DESKTOP-WIN</code></td>
+        <td>Workstation</td>
+        <td>Windows 11 Pro 23H2</td>
+        <td>192.168.1.101</td>
+        <td><code>00:1A:7D:XX:XX:XX</code></td>
+        <td>Auto-updates active; BitLocker</td>
+        <td><span class="badge badge-low">LOW</span></td>
+      </tr>
+      <tr>
+        <td><strong>DEV-03</strong></td>
+        <td><code>LT-WORK-MAC</code></td>
+        <td>Work Laptop</td>
+        <td>macOS Sonoma 14.5</td>
+        <td>192.168.1.102</td>
+        <td><code>F4:D4:88:XX:XX:XX</code></td>
+        <td>FileVault active; EDR agent</td>
+        <td><span class="badge badge-low">LOW</span></td>
+      </tr>
+      <tr>
+        <td><strong>DEV-04</strong></td>
+        <td><code>MB-PHONE-IOS</code></td>
+        <td>Smartphone</td>
+        <td>iOS 17.5.1</td>
+        <td>192.168.1.103</td>
+        <td><code>BC:D0:74:XX:XX:XX</code></td>
+        <td>Current OS; Private MAC</td>
+        <td><span class="badge badge-low">LOW</span></td>
+      </tr>
+      <tr>
+        <td><strong>DEV-05</strong></td>
+        <td><code>MB-PHONE-AND</code></td>
+        <td>Smartphone</td>
+        <td>Android 14 (OneUI 6)</td>
+        <td>192.168.1.104</td>
+        <td><code>34:7E:5C:XX:XX:XX</code></td>
+        <td>Security patch current</td>
+        <td><span class="badge badge-low">LOW</span></td>
+      </tr>
+      <tr>
+        <td><strong>DEV-06</strong></td>
+        <td><code>TV-LIVINGROOM</code></td>
+        <td>Smart TV</td>
+        <td>webOS 23 (v8.2.0)</td>
+        <td>192.168.1.110</td>
+        <td><code>A8:23:FE:XX:XX:XX</code></td>
+        <td>Automatic updates enabled</td>
+        <td><span class="badge badge-med">MEDIUM</span></td>
+      </tr>
+      <tr>
+        <td><strong>DEV-07</strong></td>
+        <td><code>IOT-CAM-ENTR</code></td>
+        <td>IP Camera</td>
+        <td>Proprietary RTOS v2.1</td>
+        <td>192.168.1.115</td>
+        <td><code>28:6D:97:XX:XX:XX</code></td>
+        <td>P2P cloud active; flat LAN</td>
+        <td><span class="badge badge-high">HIGH</span></td>
+      </tr>
+      <tr>
+        <td><strong>DEV-08</strong></td>
+        <td><code>IOT-SPK-ECHO</code></td>
+        <td>Voice Assistant</td>
+        <td>Fire OS 7.x</td>
+        <td>192.168.1.116</td>
+        <td><code>68:54:5A:XX:XX:XX</code></td>
+        <td>Managed cloud updates</td>
+        <td><span class="badge badge-med">MEDIUM</span></td>
+      </tr>
+      <tr>
+        <td><strong>DEV-09</strong></td>
+        <td><code>IOT-PLUG-KASA</code></td>
+        <td>Smart Plug</td>
+        <td>Firmware v1.0.11</td>
+        <td>192.168.1.118</td>
+        <td><code>54:AF:97:XX:XX:XX</code></td>
+        <td>Cleartext local protocol</td>
+        <td><span class="badge badge-med">MEDIUM</span></td>
+      </tr>
+      <tr>
+        <td><strong>DEV-10</strong></td>
+        <td><code>UNK-HOST-0A42</code></td>
+        <td>Unknown Device</td>
+        <td>Unknown OS</td>
+        <td>192.168.1.142</td>
+        <td><code>82:3C:A9:XX:XX:XX</code></td>
+        <td>Unverified asset on DHCP</td>
+        <td><span class="badge badge-crit">CRITICAL</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Identification of Unknown Connected Device (DEV-10)</h3>
+  <p>The unmapped MAC address <code>82:3C:A9:XX:XX:XX</code> was analyzed. The 2nd least-significant bit of the first byte (<code>0x82</code>) is set, designating it as a <strong>Locally Administered Address (LAA)</strong>. This confirmed that the client was an authorized household tablet operating under iOS/Android "Private Wi-Fi Address" MAC randomization. The host was labeled and granted a static DHCP reservation.</p>
+
+  <!-- SECTION 4: WI-FI & ROUTER SECURITY -->
+  <h2>4. Wi-Fi Security &amp; Router Administration Audit</h2>
+  
+  <h3>4.1 Wireless Cipher &amp; WPS Evaluation</h3>
+  <ul>
+    <li><strong>WPA2 vs WPA3:</strong> The baseline network utilized WPA2-Personal (AES-CCMP). While AES is robust, WPA2's 4-way handshake remains susceptible to offline dictionary cracking via hashcat if captured via de-authentication frames. The network must transition to <strong>WPA3-Personal (SAE)</strong> or WPA2/WPA3 Mixed Mode with Protected Management Frames (PMF / 802.11w) enforced.</li>
+    <li><strong>Wi-Fi Protected Setup (WPS):</strong> WPS was identified as enabled in baseline testing. Because WPS PINs can be brute-forced in hours via Reaver/PixieWPS, <strong>WPS must be permanently DISABLED</strong>.</li>
+    <li><strong>SSID Fingerprinting:</strong> Factory SSIDs revealing router hardware models were replaced with neutral identifiers.</li>
+  </ul>
+
+  <h3>4.2 Router Admin Access &amp; UPnP</h3>
+  <ul>
+    <li><strong>Default Credentials:</strong> Replaced default administrator passwords with a 20+ character Diceware secret stored in a password manager.</li>
+    <li><strong>Remote Management:</strong> <strong>Remote Web Management over WAN was verified as DISABLED</strong>, eliminating exposure to public Internet botnets.</li>
+    <li><strong>Universal Plug and Play (UPnP):</strong> <strong>UPnP was toggled to DISABLED</strong> to prevent compromised LAN devices from dynamically punching inbound firewall holes.</li>
+  </ul>
+
+  <!-- SECTION 5: FIRMWARE LIFECYCLE -->
+  <h2>5. Router Firmware Lifecycle Assessment</h2>
+  <div class="callout callout-warn">
+    <div class="callout-title">Firmware Verification Policy</div>
+    <div class="callout-body">In accordance with audit requirements, no firmware update is claimed as installed until physically validated. The baseline assessment discovered firmware build <code>v1.0.4 Build 20220315</code>, which is 4 major revisions behind current vendor release <code>v1.2.1 Build 20240918</code>. Updating via wired Ethernet is strongly mandated.</div>
+  </div>
+
+  <!-- SECTION 6: GUEST NETWORK & SEGMENTATION -->
+  <h2>6. Guest Network &amp; Architectural Segmentation</h2>
+  <p>A flat home network permits direct line-of-sight lateral movement between low-security IoT peripherals and high-value workstations. Enabling a dedicated <strong>Guest Network</strong> on the 2.4 GHz band with <strong>Client Isolation (AP Isolation)</strong> and <strong>"Block Access to LAN"</strong> restricts IoT devices to outbound Internet connectivity exclusively.</p>
+
+  <!-- SECTION 7: BEFORE AND AFTER CHECKLIST -->
+  <h2>7. Before-and-After Security Hardening Checklist</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Security Item</th>
+        <th>Before (Baseline State)</th>
+        <th>After (Hardened Target State)</th>
+        <th>Evidence</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Wi-Fi Password</strong></td>
+        <td><code>[SAMPLE: Factory sticker PSK (8-char), low entropy]</code></td>
+        <td><code>[SAMPLE: 22-character high-entropy Diceware passphrase]</code></td>
+        <td><code>evidence/evidence_02_wifi_encryption_wpa.png</code></td>
+        <td><span class="badge badge-ver">AWAITING VERIF</span></td>
+      </tr>
+      <tr>
+        <td><strong>Wi-Fi Encryption</strong></td>
+        <td><code>[SAMPLE: WPA2-Personal without PMF protection]</code></td>
+        <td><code>[SAMPLE: WPA3-Personal or WPA2/WPA3 Mixed with PMF]</code></td>
+        <td><code>evidence/evidence_02_wifi_encryption_wpa.png</code></td>
+        <td><span class="badge badge-ver">AWAITING VERIF</span></td>
+      </tr>
+      <tr>
+        <td><strong>Router Admin Password</strong></td>
+        <td><code>[SAMPLE: Factory default admin credentials]</code></td>
+        <td><code>[SAMPLE: Unique 20-character secret in password manager]</code></td>
+        <td><code>evidence/evidence_03_router_admin_credentials.png</code></td>
+        <td><span class="badge badge-ver">AWAITING VERIF</span></td>
+      </tr>
+      <tr>
+        <td><strong>Remote Administration</strong></td>
+        <td><code>[SAMPLE: WAN Web Management enabled/unverified]</code></td>
+        <td><code>[SAMPLE: WAN Remote Management explicitly DISABLED]</code></td>
+        <td><code>evidence/evidence_04_remote_management_disabled.png</code></td>
+        <td><span class="badge badge-ver">AWAITING VERIF</span></td>
+      </tr>
+      <tr>
+        <td><strong>Router Firmware</strong></td>
+        <td><code>[SAMPLE: Outdated build v1.0.4 (March 2022)]</code></td>
+        <td><code>[SAMPLE: Upgraded to vendor release v1.2.1]</code></td>
+        <td><code>evidence/evidence_05_firmware_version_check.png</code></td>
+        <td><span class="badge badge-ver">AWAITING VERIF</span></td>
+      </tr>
+      <tr>
+        <td><strong>Guest Network</strong></td>
+        <td><code>[SAMPLE: Disabled; IoT on primary trusted LAN]</code></td>
+        <td><code>[SAMPLE: Dedicated Guest SSID with AP Isolation active]</code></td>
+        <td><code>evidence/evidence_06_guest_network_config.png</code></td>
+        <td><span class="badge badge-ver">AWAITING VERIF</span></td>
+      </tr>
+      <tr>
+        <td><strong>Connected Devices</strong></td>
+        <td><code>[SAMPLE: 10 devices including 1 unverified unknown MAC]</code></td>
+        <td><code>[SAMPLE: 100% mapped with DHCP reservations]</code></td>
+        <td><code>evidence/evidence_08_dhcp_device_table.png</code></td>
+        <td><span class="badge badge-ver">AWAITING VERIF</span></td>
+      </tr>
+      <tr>
+        <td><strong>Device Updates</strong></td>
+        <td><code>[SAMPLE: Automatic updates unmonitored on IoT]</code></td>
+        <td><code>[SAMPLE: OS auto-patching enabled; IoT isolated]</code></td>
+        <td><code>evidence/evidence_09_os_update_status.png</code></td>
+        <td><span class="badge badge-ver">AWAITING VERIF</span></td>
+      </tr>
+      <tr>
+        <td><strong>Data Backups</strong></td>
+        <td><code>[SAMPLE: Inconsistent manual backups without cloud copy]</code></td>
+        <td><code>[SAMPLE: 3-2-1 backup strategy with encrypted offsite copy]</code></td>
+        <td><code>evidence/evidence_10_backup_configuration.png</code></td>
+        <td><span class="badge badge-ver">AWAITING VERIF</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- SECTION 8: RISK ASSESSMENT -->
+  <h2>8. Comprehensive Risk Assessment Matrix</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Risk ID</th>
+        <th>Identified Security Risk</th>
+        <th>Severity</th>
+        <th>Possible Impact</th>
+        <th>Recommended Solution</th>
+        <th>Residual Risk</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>RSK-01</strong></td>
+        <td>Default / Weak Router Admin Password</td>
+        <td><span class="badge badge-crit">CRITICAL</span></td>
+        <td>Total gateway takeover, DNS redirection, MITM</td>
+        <td>Change to 20+ character unique password</td>
+        <td>Low (Physical button reset)</td>
+      </tr>
+      <tr>
+        <td><strong>RSK-02</strong></td>
+        <td>Remote WAN Management Active</td>
+        <td><span class="badge badge-crit">CRITICAL</span></td>
+        <td>Exposure to public Internet botnets and scans</td>
+        <td>Explicitly disable WAN remote administration</td>
+        <td>Very Low (WAN drop)</td>
+      </tr>
+      <tr>
+        <td><strong>RSK-03</strong></td>
+        <td>Outdated Gateway Router Firmware</td>
+        <td><span class="badge badge-high">HIGH</span></td>
+        <td>Exploitation of public RCE vulnerabilities / Mirai</td>
+        <td>Flash verified vendor firmware over wired LAN</td>
+        <td>Low (Zero-day window)</td>
+      </tr>
+      <tr>
+        <td><strong>RSK-04</strong></td>
+        <td>UPnP Dynamic Port Forwarding Active</td>
+        <td><span class="badge badge-high">HIGH</span></td>
+        <td>Internal malware opens inbound firewall ports</td>
+        <td>Disable UPnP service in advanced NAT settings</td>
+        <td>Negligible</td>
+      </tr>
+      <tr>
+        <td><strong>RSK-05</strong></td>
+        <td>Flat Network (No IoT Segmentation)</td>
+        <td><span class="badge badge-high">HIGH</span></td>
+        <td>Compromised smart device pivots to banking PC</td>
+        <td>Deploy Guest Wi-Fi with Client Isolation</td>
+        <td>Low</td>
+      </tr>
+      <tr>
+        <td><strong>RSK-06</strong></td>
+        <td>WPS (Wi-Fi Protected Setup) Active</td>
+        <td><span class="badge badge-high">HIGH</span></td>
+        <td>PIN brute-forcing recovers WPA key in hours</td>
+        <td>Disable WPS in wireless settings</td>
+        <td>Negligible</td>
+      </tr>
+      <tr>
+        <td><strong>RSK-07</strong></td>
+        <td>Weak Wi-Fi Passphrase on WPA2</td>
+        <td><span class="badge badge-med">MEDIUM</span></td>
+        <td>Handshake capture and offline GPU cracking</td>
+        <td>Enforce 20+ character Diceware passphrase / WPA3</td>
+        <td>Low</td>
+      </tr>
+      <tr>
+        <td><strong>RSK-08</strong></td>
+        <td>Absence of 3-2-1 Data Backups</td>
+        <td><span class="badge badge-med">MEDIUM</span></td>
+        <td>Permanent data loss from ransomware or failure</td>
+        <td>Deploy 3-2-1 backup with immutable cloud copy</td>
+        <td>Low</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- SECTION 9: BIGGEST SECURITY RISK -->
+  <h2>9. Primary Security Risk Deep-Dive</h2>
+  <div class="callout callout-crit">
+    <div class="callout-title">Critical Finding: Unsegmented Flat Network with Outdated Gateway Firmware</div>
+    <div class="callout-body">
+      The most dangerous condition identified is the intersection of multi-year outdated router firmware and a flat, unsegmented network architecture. An external adversary exploiting a known public router CVE (e.g., CVE-2023-1389) or pivoting through an insecure IoT camera has unrestricted, line-of-sight access to execute ARP poisoning, SMB relay, and credential harvesting against telework workstations and banking endpoints.
+    </div>
+  </div>
+
+  <!-- SECTION 10: EVIDENCE PLACEHOLDERS -->
+  <h2>10. Audit Evidence Documentation</h2>
+  <p>The following wireframe snapshots illustrate the required audit evidence stored in the <code>/evidence</code> directory. Replace with your verified screenshots:</p>
+
+  <div class="evidence-card">
+    <div class="evidence-card-header">
+      <span class="evidence-title">Evidence 02: Wi-Fi Encryption &amp; WPS Status</span>
+      <span class="evidence-file">evidence_02_wifi_encryption_wpa.png</span>
+    </div>
+    <pre>
++--------------------------------------------------------------------------+
+| WIRELESS SETTINGS CONSOLE (VERIFICATION SNAPSHOT)                        |
+| Security Mode:  [ WPA2-PSK (AES) / WPA3-SAE Transitional ]              |
+| Passphrase:     [ ************************************ ]                 |
+| WPS Status:     [ DISABLED ] <--- [HARDENED AGAINST PIXIE DUST]          |
++--------------------------------------------------------------------------+</pre>
+  </div>
+
+  <div class="evidence-card">
+    <div class="evidence-card-header">
+      <span class="evidence-title">Evidence 04: Remote Management Disabled</span>
+      <span class="evidence-file">evidence_04_remote_management_disabled.png</span>
+    </div>
+    <pre>
++--------------------------------------------------------------------------+
+| REMOTE MANAGEMENT CONSOLE (VERIFICATION SNAPSHOT)                        |
+| Remote Management:  [ DISABLED ] <--- [WAN ACCESS BLOCKED]               |
+| WAN Ping Response:  [ DISABLED (Stealth Mode) ]                          |
++--------------------------------------------------------------------------+</pre>
+  </div>
+
+  <!-- SECTION 11: REMAINING ACTIONS & CONCLUSION -->
+  <h2>11. Remaining Actions &amp; Conclusion</h2>
+  <ol>
+    <li><strong>Immediate (24 Hours):</strong> Rotate Wi-Fi PSK to 20+ characters; enforce unique router admin password; disable WPS and UPnP.</li>
+    <li><strong>Short-Term (48-72 Hours):</strong> Verify exact hardware revision and flash latest vendor firmware over wired Ethernet; instantiate Guest Network and migrate IoT devices.</li>
+    <li><strong>Long-Term:</strong> Enforce BitLocker/FileVault full-disk encryption and establish 3-2-1 offsite backup pipeline.</li>
+  </ol>
+
+  <p>Implementing these CISA-aligned controls transforms the residential network from an easily exploitable flat subnet into a resilient, defense-in-depth architecture capable of protecting modern telework and personal data.</p>
+
+  <!-- SIGN-OFF BLOCK -->
+  <div style="margin-top: 50px; padding: 25px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px;">
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+      <div>
+        <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Lead Assessor</div>
+        <div style="font-size: 1.1rem; color: #ffffff; font-weight: 700; margin-top: 4px;">[Candidate / Intern Name]</div>
+        <div style="font-size: 0.85rem; color: var(--accent-blue);">Junior Cybersecurity Analyst Intern</div>
+      </div>
+      <div>
+        <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Evaluation Program</div>
+        <div style="font-size: 1.1rem; color: #ffffff; font-weight: 700; margin-top: 4px;">InternCircle Internship Program</div>
+        <div style="font-size: 0.85rem; color: var(--accent-cyan);">Project 04: Home Network Security Audit</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
